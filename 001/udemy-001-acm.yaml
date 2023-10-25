@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: awstut.net
+    
+  HostedZoneId:
+    Type: String
+    Default: Z023054218FS37XTCMMPY
+    
+  #Prefix:
+  #  Type: String
+
+
+Resources:
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      #DomainName: !Ref DomainName
+      DomainName: !Sub "*.${DomainName}"
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref HostedZoneId
+      ValidationMethod: DNS
+      
+
+Outputs:
+  Certificate:
+    Value: !Ref Certificate

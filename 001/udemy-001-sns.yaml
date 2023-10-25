@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Function1:
+    Type: String
+    
+  Function2:
+    Type: String
+  
+  FunctionArn1:
+    Type: String
+    
+  FunctionArn2:
+    Type: String
+    
+  MailAddress:
+    Type: String
+
+  #Parameter1:
+  #  Type: String
+
+  Prefix:
+    Type: String
+    
+    
+Resources:
+  Topic1:
+    Type: AWS::SNS::Topic
+    Properties:
+      #ContentBasedDeduplication: Boolean
+      #DisplayName: String
+      #FifoTopic: Boolean
+      #KmsMasterKeyId: String
+      Subscription: 
+        - Endpoint: !Ref FunctionArn1
+          Protocol: lambda
+        - Endpoint: !Ref FunctionArn2
+          Protocol: lambda
+      #Tags: 
+      #  - Tag
+      TopicName: !Sub "${Prefix}-topic-01"
+      
+  SNSPermission1: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref Function1
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref Topic1
+    
+  SNSPermission2: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref Function2
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref Topic1
+      
+      
+  Topic2:
+    Type: AWS::SNS::Topic
+    Properties:
+      #ContentBasedDeduplication: Boolean
+      #DisplayName: String
+      #FifoTopic: Boolean
+      #KmsMasterKeyId: String
+      Subscription: 
+        - Endpoint: !Ref MailAddress
+          Protocol: email
+      #Tags: 
+      #  - Tag
+      TopicName: !Sub "${Prefix}-topic-02"
+      
+Outputs:
+  Topic1:
+    Value: !Ref Topic1
+
+  Topic2:
+    Value: !Ref Topic2

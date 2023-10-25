@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  #ALBDNSName:
+  #  Type: String
+    
+  BucketName:
+    Type: String
+    
+  BucketRegionalDomainName:
+    Type: String
+    
+  CacheTTL:
+    Type: Number
+    
+  Certificate:
+    Type: String
+  
+  DomainName:
+    Type: String
+    
+  #InstancePublicDnsName:
+  #  Type: String
+    
+  Prefix:
+    Type: String
+    
+
+Resources:
+  #OAC:
+  #  Type: AWS::CloudFront::OriginAccessControl
+  #  Properties: 
+  #    OriginAccessControlConfig:
+  #      #Description: Access Control
+  #      Name: !Ref Prefix
+  #      OriginAccessControlOriginType: s3
+  #      SigningBehavior: always
+  #      SigningProtocol: sigv4
+        
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          #- !Ref DomainName
+          - !Sub "static.${DomainName}"
+        #CacheBehaviors:
+        #  - AllowedMethods:
+        #      - GET
+        #      - HEAD
+        #    CachedMethods:
+        #      - GET
+        #      - HEAD
+        #    Compress: true
+        #    ForwardedValues:
+        #      Cookies:
+        #        Forward: none
+        #      QueryString: false
+        #    #PathPattern: /s3/*
+        #    PathPattern: /wp-content/*
+        #    TargetOriginId: !Ref BucketName
+        #    ViewerProtocolPolicy: redirect-to-https
+        #    DefaultTTL: !Ref CacheTTL
+        #    MaxTTL: !Ref CacheTTL
+        #    MinTTL: !Ref CacheTTL
+        #DefaultCacheBehavior:
+        #  AllowedMethods:
+        #    - GET
+        #    - HEAD
+        #  CachedMethods:
+        #    - GET
+        #    - HEAD
+        #  Compress: true
+        #  ForwardedValues:
+        #    Cookies:
+        #      Forward: none
+        #    QueryString: false
+        #  TargetOriginId: !Ref ALBDNSName
+        #  #ViewerProtocolPolicy: allow-all
+        #  ViewerProtocolPolicy: redirect-to-https
+        #  DefaultTTL: !Ref CacheTTL
+        #  MaxTTL: !Ref CacheTTL
+        #  MinTTL: !Ref CacheTTL
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues:
+            Cookies:
+              Forward: none
+            QueryString: false
+          TargetOriginId: !Ref BucketName
+          ViewerProtocolPolicy: redirect-to-https
+          DefaultTTL: !Ref CacheTTL
+          MaxTTL: !Ref CacheTTL
+          MinTTL: !Ref CacheTTL
+        Enabled: true
+        Origins:
+          #- CustomOriginConfig:
+          #    OriginProtocolPolicy: http-only
+          #  DomainName: !Ref ALBDNSName
+          #  Id: !Ref ALBDNSName
+          - DomainName: !Ref BucketRegionalDomainName
+            Id: !Ref BucketName
+            #OriginAccessControlId: !GetAtt OAC.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          SslSupportMethod: sni-only
+        
+        
+Outputs:
+  Distribution:
+    Value: !Ref Distribution
+
+  #OAI:
+  #  Value: !Ref OAI
+  
+  DistributionDomainName:
+    Value: !GetAtt Distribution.DomainName
