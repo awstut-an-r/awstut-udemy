@@ -21,9 +21,6 @@ Parameters:
   HTTPPort:
     Type: Number
     
-  #HTTPSPort:
-  #  Type: Number
-  
   MySQLPort:
     Type: Number
     
@@ -103,25 +100,7 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
-      
-      
-  #PrivateRouteTable:
-  #  Type: AWS::EC2::RouteTable
-  #  Properties:
-  #    VpcId: !Ref VPC
-  #    
-  #PrivateSubnetRouteTableAssociation1:
-  #  Type: AWS::EC2::SubnetRouteTableAssociation
-  #  Properties:
-  #    SubnetId: !Ref PrivateSubnet1
-  #    RouteTableId: !Ref PrivateRouteTable
-  #    
-  #PrivateSubnetRouteTableAssociation2:
-  #  Type: AWS::EC2::SubnetRouteTableAssociation
-  #  Properties:
-  #    SubnetId: !Ref PrivateSubnet2
-  #    RouteTableId: !Ref PrivateRouteTable
-      
+
       
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -146,10 +125,6 @@ Resources:
           FromPort: !Ref HTTPPort
           ToPort: !Ref HTTPPort
           SourceSecurityGroupId: !Ref ALBSecurityGroup
-        #- IpProtocol: tcp
-        #  FromPort: !Ref HTTPPort
-        #  ToPort: !Ref HTTPPort
-        #  CidrIp: 0.0.0.0/0
           
   DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -162,23 +137,7 @@ Resources:
           FromPort: !Ref MySQLPort
           ToPort: !Ref MySQLPort
           SourceSecurityGroupId: !Ref InstanceSecurityGroup
-        #- IpProtocol: tcp
-        #  FromPort: !Ref MySQLPort
-        #  ToPort: !Ref MySQLPort
-        #  SourceSecurityGroupId: !Ref FunctionSecurityGroup
-          
-  #EndpointSecurityGroup:
-  #  Type: AWS::EC2::SecurityGroup
-  #  Properties:
-  #    GroupName: !Sub "${Prefix}-EndpointSecurityGroup"
-  #    GroupDescription: Allow HTTPS from InstanceSecurityGroup.
-  #    VpcId: !Ref VPC
-  #    SecurityGroupIngress:
-  #      - IpProtocol: tcp
-  #        FromPort: !Ref HTTPSPort
-  #        ToPort: !Ref HTTPSPort
-  #        SourceSecurityGroupId: !Ref InstanceSecurityGroup
-          
+
           
 Outputs:
   VPC:
@@ -195,10 +154,7 @@ Outputs:
       
   PrivateSubnet2:
     Value: !Ref PrivateSubnet2
-      
-  #PrivateRouteTable:
-  #  Value: !Ref PrivateRouteTable
-      
+
   ALBSecurityGroup:
     Value: !Ref ALBSecurityGroup
   
@@ -207,6 +163,3 @@ Outputs:
     
   DBSecurityGroup:
     Value: !Ref DBSecurityGroup
-      
-  #EndpointSecurityGroup:
-  #  Value: !Ref EndpointSecurityGroup
