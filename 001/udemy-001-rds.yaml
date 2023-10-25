@@ -49,6 +49,7 @@ Resources:
       EngineVersion: !Ref DBEngineVersion
       MasterUsername: !Ref DBMasterUsername
       MasterUserPassword: !Ref DBMasterUserPassword
+      MultiAZ: true
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
         
