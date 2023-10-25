@@ -3,21 +3,17 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   DomainName:
     Type: String
-    Default: awstut.net
+    Default: [domain-name]
     
   HostedZoneId:
     Type: String
-    Default: Z023054218FS37XTCMMPY
-    
-  #Prefix:
-  #  Type: String
+    Default: [hosted-zone-id]
 
 
 Resources:
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      #DomainName: !Ref DomainName
       DomainName: !Sub "*.${DomainName}"
       DomainValidationOptions:
         - DomainName: !Ref DomainName
