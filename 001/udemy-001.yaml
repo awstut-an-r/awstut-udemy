@@ -52,27 +52,7 @@ Parameters:
   CloudFrontCacheTTL:
     Type: Number
     Default: 0
-    
-  #CustomHeaderKey:
-  #  Type: String
-  #  Default: X-Custom-Header
-  
-  #CustomHeaderNameJsonKey:
-  #  Type: String
-  #  Default: CustomHeaderName
-  #  
-  #CustomHeaderName:
-  #  Type: String
-  #  Default: X-Custom-Header
-  #  
-  #CustomHeaderValueJsonKey:
-  #  Type: String
-  #  Default: CustomHeaderValue
-  #  
-  #CustomHeaderValueLength:
-  #  Type: Number
-  #  Default: 64
-    
+
   DBAllocatedStorage:
     Type: Number
     Default: 20
@@ -120,11 +100,7 @@ Parameters:
   HTTPPort:
     Type: Number
     Default: 80
-    
-  #HTTPSPort:
-  #  Type: Number
-  #  Default: 443
-  
+
   ImageBuilderParentImage:
     Type: String
     Default: arn:aws:imagebuilder:ap-northeast-1:aws:image/amazon-linux-2-arm64/x.x.x
@@ -147,7 +123,6 @@ Parameters:
     
   InstanceType:
     Type: String
-    #Default: t4g.nano
     Default: t4g.micro
     
   LambdaArchitecture:
@@ -176,7 +151,6 @@ Parameters:
     
   WordPressAdminEmail:
     Type: String
-    #Default: email@example.com
     Default: [email-address]
     
   WordPressAdminPassword:
@@ -193,20 +167,6 @@ Parameters:
       
     
 Resources:
-  #SecretsManagerStack:
-  #  Type: AWS::CloudFormation::Stack
-  #  Properties:
-  #    TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-secretsmanager.yaml"
-  #    Parameters:
-  #      CustomHeaderNameJsonKey: !Ref CustomHeaderNameJsonKey
-  #      CustomHeaderName: !Ref CustomHeaderName
-  #      CustomHeaderValueJsonKey: !Ref CustomHeaderValueJsonKey
-  #      CustomHeaderValueLength: !Ref CustomHeaderValueLength
-  #      #Password: !Ref Password
-  #      #PasswordKey: !Ref PasswordKey
-  #      #PasswordLength: !Ref PasswordLength
-  #      Prefix: !Ref Prefix
-  
   S3Stack1:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -221,10 +181,8 @@ Resources:
       Parameters:
         Architecture: !Ref LambdaArchitecture
         Handler: !Ref LambdaHandler
-        #ParameterAmi: !GetAtt SSMStack.Outputs.ParameterAmi
         Prefix: !Ref Prefix
         Runtime: !Ref LambdaRuntime
-        #WaitConditionTimeout: !Ref WaitConditionTimeout
         
   LambdaStack2:
     Type: AWS::CloudFormation::Stack
@@ -234,10 +192,8 @@ Resources:
         Architecture: !Ref LambdaArchitecture
         EventBusName: !Ref EventBusName
         Handler: !Ref LambdaHandler
-        #Parameter: !GetAtt SSMStack.Outputs.Parameter
         Prefix: !Ref Prefix
         Runtime: !Ref LambdaRuntime
-        #WaitConditionTimeout: !Ref WaitConditionTimeout
         
   SNSStack:
     Type: AWS::CloudFormation::Stack
@@ -252,9 +208,7 @@ Resources:
         FunctionArn1: !GetAtt LambdaStack1.Outputs.FunctionArn1
         FunctionArn2: !GetAtt LambdaStack2.Outputs.FunctionArn2
         MailAddress: !Ref WordPressAdminEmail
-        #Parameter1: !GetAtt SSMStack.Outputs.Parameter1
         Prefix: !Ref Prefix
-        
         
   VPCStack:
     Type: AWS::CloudFormation::Stack
@@ -268,7 +222,6 @@ Resources:
         CidrIp3: 10.0.3.0/24
         CidrIp4: 10.0.4.0/24
         HTTPPort: !Ref HTTPPort
-        #HTTPSPort: !Ref HTTPSPort
         MySQLPort: !Ref MySQLPort
         Prefix: !Ref Prefix
         VPCCidrBlock: 10.0.0.0/16
@@ -280,7 +233,6 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-rds.yaml"
       Parameters:
-        #AvailabilityZone: !Ref AvailabilityZone1
         DBAllocatedStorage: !Ref DBAllocatedStorage
         DBEngine: !Ref DBEngine
         DBEngineVersion: !Ref DBEngineVersion
@@ -306,7 +258,6 @@ Resources:
         DBMasterUsername: !Ref DBMasterUsername
         DBMasterUserPassword: !Ref DBMasterUserPassword
         DBName: !Ref DBName
-        #DBSecurityGroup: !GetAtt VPCStack.Outputs.DBSecurityGroup
         DomainName: !Ref DomainName
         ImageBuilderParentImage: !Ref ImageBuilderParentImage
         ImageBuilderPlatform: !Ref ImageBuilderPlatform
@@ -315,7 +266,6 @@ Resources:
         InstanceSecurityGroup: !GetAtt VPCStack.Outputs.InstanceSecurityGroup
         InstanceType: !Ref InstanceType
         Prefix: !Ref Prefix
-        #PrivateSubnet2: !GetAtt VPCStack.Outputs.PrivateSubnet2
         PublicSubnet2: !GetAtt VPCStack.Outputs.PublicSubnet2
         Topic1: !GetAtt SNSStack.Outputs.Topic1
         WordPressAdminEmail: !Ref WordPressAdminEmail
@@ -333,10 +283,8 @@ Resources:
         Architecture: !Ref LambdaArchitecture
         Handler: !Ref LambdaHandler
         ImagePipelineArn: !GetAtt ImageBuilderStack.Outputs.ImagePipelineArn
-        #Parameter: !GetAtt SSMStack.Outputs.Parameter
         Prefix: !Ref Prefix
         Runtime: !Ref LambdaRuntime
-        #WaitConditionTimeout: !Ref WaitConditionTimeout
         
   LambdaStack4:
     Type: AWS::CloudFormation::Stack
@@ -348,8 +296,6 @@ Resources:
         Architecture: !Ref LambdaArchitecture
         EventBusName: !Ref EventBusName
         Handler: !Ref LambdaHandler
-        #ImagePipelineArn: !GetAtt ImageBuilderStack.Outputs.ImagePipelineArn
-        #Parameter: !GetAtt SSMStack.Outputs.Parameter
         Prefix: !Ref Prefix
         Runtime: !Ref LambdaRuntime
         WaitConditionTimeout: !Ref WaitConditionTimeout
@@ -363,46 +309,27 @@ Resources:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-ec2.yaml"
       Parameters:
         BucketName: !GetAtt S3Stack1.Outputs.BucketName
-        #DBInstanceEndpointAddress: !GetAtt RDSStack.Outputs.DBInstanceEndpointAddress
-        #DBMasterUsername: !Ref DBMasterUsername
-        #DBMasterUserPassword: !Ref DBMasterUserPassword
-        #DBName: !Ref DBName
-        #ImageId: !Ref InstanceImageId
         InstanceSecurityGroup: !GetAtt VPCStack.Outputs.InstanceSecurityGroup
         InstanceType: !Ref InstanceType
         ParameterAmi: !GetAtt LambdaStack1.Outputs.ParameterAmi
         Prefix: !Ref Prefix
-        #PrivateSubnet1: !GetAtt VPCStack.Outputs.PrivateSubnet1
-        #PrivateSubnet2: !GetAtt VPCStack.Outputs.PrivateSubnet2
         PublicSubnet1: !GetAtt VPCStack.Outputs.PublicSubnet1
         PublicSubnet2: !GetAtt VPCStack.Outputs.PublicSubnet2
-        #UserData: !Base64 |
-        #  #!/bin/bash -xe
-        #  yum update -y
-        #  yum install -y httpd
-        #  systemctl start httpd
-        #  systemctl enable httpd
-        #  ec2-metadata -i > /var/www/html/index.html
           
   ALBStack:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-      #- SecretsManagerStack
       - EC2Stack
     Properties:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-alb.yaml"
       Parameters:
         ALBSecurityGroup: !GetAtt VPCStack.Outputs.ALBSecurityGroup
-        #CustomHeaderNameJsonKey: !Ref CustomHeaderNameJsonKey
-        #CustomHeaderName: !Ref CustomHeaderName
-        #CustomHeaderValueJsonKey: !Ref CustomHeaderValueJsonKey
         HTTPPort: !Ref HTTPPort
         Instance1: !GetAtt EC2Stack.Outputs.Instance1
         Instance2: !GetAtt EC2Stack.Outputs.Instance2
         PublicSubnet1: !GetAtt VPCStack.Outputs.PublicSubnet1
         PublicSubnet2: !GetAtt VPCStack.Outputs.PublicSubnet2
         Prefix: !Ref Prefix
-        #Secret: !GetAtt SecretsManagerStack.Outputs.Secret
         VPC: !GetAtt VPCStack.Outputs.VPC
         
         HealthyThresholdCount: 5
@@ -435,24 +362,16 @@ Resources:
   CloudFrontStack:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-      #- SecretsManagerStack
       - ALBStack
     Properties:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-cloudfront.yaml"
       Parameters:
-        #ALBDNSName: !GetAtt ALBStack.Outputs.ALBDNSName
         BucketName: !GetAtt S3Stack1.Outputs.BucketName
-        #BucketWebsiteURL: !GetAtt S3Stack1.Outputs.BucketWebsiteURL
         BucketRegionalDomainName: !GetAtt S3Stack1.Outputs.BucketRegionalDomainName
         CacheTTL: !Ref CloudFrontCacheTTL
         Certificate: !Ref ACMCertificate
-        #CustomHeaderNameJsonKey: !Ref CustomHeaderNameJsonKey
-        #CustomHeaderName: !Ref CustomHeaderName
-        #CustomHeaderValueJsonKey: !Ref CustomHeaderValueJsonKey
         DomainName: !Ref DomainName
-        #InstancePublicDnsName: !GetAtt EC2Stack.Outputs.InstancePublicDnsName
         Prefix: !Ref Prefix
-        #Secret: !GetAtt SecretsManagerStack.Outputs.Secret
         
   S3Stack2:
     Type: AWS::CloudFormation::Stack
@@ -464,9 +383,6 @@ Resources:
       Parameters:
         BucketName: !GetAtt S3Stack1.Outputs.BucketName
         Distribution: !GetAtt CloudFrontStack.Outputs.Distribution
-        #DistributionDomainName: !GetAtt CloudFrontStack.Outputs.DistributionDomainName
-        #OAI: !GetAtt CloudFrontStack.Outputs.OAI
-        #Prefix: !Ref Prefix
         
   Route53Stack:
     Type: AWS::CloudFormation::Stack
