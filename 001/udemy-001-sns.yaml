@@ -16,9 +16,6 @@ Parameters:
   MailAddress:
     Type: String
 
-  #Parameter1:
-  #  Type: String
-
   Prefix:
     Type: String
     
@@ -27,17 +24,11 @@ Resources:
   Topic1:
     Type: AWS::SNS::Topic
     Properties:
-      #ContentBasedDeduplication: Boolean
-      #DisplayName: String
-      #FifoTopic: Boolean
-      #KmsMasterKeyId: String
       Subscription: 
         - Endpoint: !Ref FunctionArn1
           Protocol: lambda
         - Endpoint: !Ref FunctionArn2
           Protocol: lambda
-      #Tags: 
-      #  - Tag
       TopicName: !Sub "${Prefix}-topic-01"
       
   SNSPermission1: 
@@ -60,15 +51,9 @@ Resources:
   Topic2:
     Type: AWS::SNS::Topic
     Properties:
-      #ContentBasedDeduplication: Boolean
-      #DisplayName: String
-      #FifoTopic: Boolean
-      #KmsMasterKeyId: String
       Subscription: 
         - Endpoint: !Ref MailAddress
           Protocol: email
-      #Tags: 
-      #  - Tag
       TopicName: !Sub "${Prefix}-topic-02"
       
 Outputs:
