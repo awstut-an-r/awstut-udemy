@@ -18,10 +18,7 @@ Parameters:
     
   DomainName:
     Type: String
-    
-  #Prefix:
-  #  Type: String
-  
+
   TTL:
     Type: Number
     
@@ -33,8 +30,6 @@ Resources:
       AliasTarget: 
         DNSName: !Ref ALBDNSName
         HostedZoneId: !Ref ALBHostedZoneId
-        #DNSName: !Ref DistributionDomainName
-        #HostedZoneId: !Ref DistributionHostedZoneId
       HostedZoneId: !Ref DomainHostedZoneId
       Name: !Ref DomainName
       Type: A
@@ -42,14 +37,9 @@ Resources:
   DnsRecord2:
     Type: AWS::Route53::RecordSet
     Properties:
-      #AliasTarget: 
-      #  DNSName: !Ref DistributionDomainName
-      #  HostedZoneId: !Ref DistributionHostedZoneId
       HostedZoneId: !Ref DomainHostedZoneId
-      #Name: !Ref DomainName
       Name: !Sub "static.${DomainName}"
       ResourceRecords:
         - !Ref DistributionDomainName
       TTL: !Ref TTL
       Type: CNAME
-      #Type: A
