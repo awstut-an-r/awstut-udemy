@@ -173,6 +173,20 @@ Resources:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-s3.yaml"
       Parameters:
         Prefix: !Ref Prefix
+        
+  CloudFrontStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - ALBStack
+    Properties:
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-cloudfront.yaml"
+      Parameters:
+        BucketName: !GetAtt S3Stack.Outputs.BucketName
+        BucketRegionalDomainName: !GetAtt S3Stack.Outputs.BucketRegionalDomainName
+        CacheTTL: !Ref CloudFrontCacheTTL
+        Certificate: !Ref ACMCertificate
+        DomainName: !Ref DomainName
+        Prefix: !Ref Prefix
   
   LambdaStack1:
     Type: AWS::CloudFormation::Stack
@@ -357,20 +371,6 @@ Resources:
         Statistic: !Ref CloudWatchAlarmStatistic
         Threshold: !Ref CloudWatchAlarmThreshold
         Topic2: !GetAtt SNSStack.Outputs.Topic2
-        
-  CloudFrontStack:
-    Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - ALBStack
-    Properties:
-      TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-cloudfront.yaml"
-      Parameters:
-        BucketName: !GetAtt S3Stack.Outputs.BucketName
-        BucketRegionalDomainName: !GetAtt S3Stack.Outputs.BucketRegionalDomainName
-        CacheTTL: !Ref CloudFrontCacheTTL
-        Certificate: !Ref ACMCertificate
-        DomainName: !Ref DomainName
-        Prefix: !Ref Prefix
 
   Route53Stack:
     Type: AWS::CloudFormation::Stack
