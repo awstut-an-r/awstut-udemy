@@ -253,7 +253,7 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-imagebuilder.yaml"
       Parameters:
-        BucketName: !GetAtt S3Stack1.Outputs.BucketName
+        BucketName: !GetAtt S3Stack.Outputs.BucketName
         DBInstanceEndpointAddress: !GetAtt RDSStack.Outputs.DBInstanceEndpointAddress
         DBMasterUsername: !Ref DBMasterUsername
         DBMasterUserPassword: !Ref DBMasterUserPassword
@@ -365,8 +365,8 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-cloudfront.yaml"
       Parameters:
-        BucketName: !GetAtt S3Stack1.Outputs.BucketName
-        BucketRegionalDomainName: !GetAtt S3Stack1.Outputs.BucketRegionalDomainName
+        BucketName: !GetAtt S3Stack.Outputs.BucketName
+        BucketRegionalDomainName: !GetAtt S3Stack.Outputs.BucketRegionalDomainName
         CacheTTL: !Ref CloudFrontCacheTTL
         Certificate: !Ref ACMCertificate
         DomainName: !Ref DomainName
