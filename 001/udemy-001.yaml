@@ -167,10 +167,10 @@ Parameters:
       
     
 Resources:
-  S3Stack1:
+  S3Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-s3-01.yaml"
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-s3.yaml"
       Parameters:
         Prefix: !Ref Prefix
   
@@ -371,18 +371,7 @@ Resources:
         Certificate: !Ref ACMCertificate
         DomainName: !Ref DomainName
         Prefix: !Ref Prefix
-        
-  S3Stack2:
-    Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - S3Stack1
-      - CloudFrontStack
-    Properties:
-      TemplateURL: !Sub "https://${TemplateBucketName}.s3.${AWS::Region}.amazonaws.com/${Prefix}/${Prefix}-s3-02.yaml"
-      Parameters:
-        BucketName: !GetAtt S3Stack1.Outputs.BucketName
-        Distribution: !GetAtt CloudFrontStack.Outputs.Distribution
-        
+
   Route53Stack:
     Type: AWS::CloudFormation::Stack
     DependsOn:
